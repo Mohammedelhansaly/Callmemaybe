@@ -71,7 +71,10 @@ class FunctionCallResult(BaseModel):
                     raise ValueError(f"{param_name} must be string")
 
             elif param_type == "number":
-                if not isinstance(value, (int, float)) or isinstance(value, bool):
+                if (
+                    not isinstance(value,
+                                   (int, float)) or isinstance(value, bool)
+                ):
                     raise ValueError(f"{param_name} must be number")
 
             elif param_type == "boolean":
