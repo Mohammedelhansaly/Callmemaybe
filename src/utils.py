@@ -46,7 +46,8 @@ def is_valid_prefix(partial_text, allowed_strings):
     return any(choise.startswith(partial_text) for choise in allowed_strings)
 
 
-def get_valid_next_token(partial_text, allowed_strings, vocabulary: Vocabulary):
+def get_valid_next_token(partial_text, allowed_strings,
+                         vocabulary: Vocabulary):
     valid_token_ids = []
     for token in vocabulary.all_tokens():
         token_text = vocabulary.get_token_text(token)
@@ -55,6 +56,7 @@ def get_valid_next_token(partial_text, allowed_strings, vocabulary: Vocabulary):
         if is_valid_prefix(candidate_text, allowed_strings):
             valid_token_ids.append(token)
     return valid_token_ids
+
 
 def is_complete_match(text, allowed_strings):
     return text in allowed_strings

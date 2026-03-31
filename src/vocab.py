@@ -28,7 +28,3 @@ class Vocabulary:
 
     def all_tokens(self):
         return list(self.id_to_token.keys())
-
-
-
-
