@@ -5,11 +5,11 @@ from llm_sdk import Small_LLM_Model
 class LLMEngine:
     def __init__(self):
         self.model = Small_LLM_Model()
-    
-    def build_prompot(SELF, prompt, functions):
+
+    def build_prompt(self, prompt, functions):
         lines = []
         for function in functions:
-            lines.append(f"{function.name} : {function.description}")
+            lines.append(f"{function['name']} : {function['description']}")
         joined_functions = "\n".join(lines)
         return (
             "You are a function selection assistant.\n"
@@ -19,6 +19,7 @@ class LLMEngine:
             f"Available functions: \n{joined_functions}\n"
             "return only the name of the function you choose\n"
         )
+
     def encode_to_list(self, text):
         tensor_ids = self.model.encode(text)
         return tensor_ids[0].tolist()

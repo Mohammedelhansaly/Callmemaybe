@@ -4,6 +4,7 @@ from src.utils import load_json_file, save_json_file
 from src.vocab import Vocabulary
 from src.utils import is_valid_prefix, get_valid_next_token, is_complete_match
 from src.llm_engine import LLMEngine
+from src.decoder import decode_function_name, get_function_names
 def main():
     # id_to_token={
     #     1: "fn_",
@@ -28,17 +29,33 @@ def main():
     # print(valid_ids)
     # print([vocub.get_token_text(i) for i in valid_ids])
 
-    engine  = LLMEngine()
-    promt_text = engine.build_prompot(
-        "What is 2 + 2?",
-        [
-            {"name": "fn_add_numbers", "description": "Add two numbers together"},
-            {"name": "fn_greet", "description": "Greet someone"}
-        ]
-    )
-    promtpt_ids = engine.encode_to_list(promt_text)
-    print(promt_text)
+    # engine  = LLMEngine()
+    # functions = [
+    #         {"name": "fn_add_numbers", "description": "Add two numbers together"},
+    #         {"name": "fn_greet", "description": "Greet someone"}
+    #     ]
+    # promt_text = engine.build_prompt(
+    #     "What is 2 + 2?",
+    #     functions
+    # )
+    # promtpt_ids = engine.encode_to_list(promt_text)
+    # print(promtpt_ids)
 
+    with open("data/input/functions_definition.json", "r") as f:
+        function_definitions = json.load(f)
+
+    with open("data/input/function_calling_tests.json", "r") as f:
+        prompt_items = json.load(f)    
+    
+    vocab = Vocabulary()
+    generated_text = decode_function_name(
+        user_prompt=prompt_items[0]["prompt"],
+        functions=function_definitions,
+        engine=LLMEngine(),
+        vocabulary=Vocabulary(),
+    
+    )
+    print(generated_text)
     
 
 
