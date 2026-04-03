@@ -12,7 +12,8 @@ class Vocabulary:
             data = json.load(f)
         id_to_token = {}
         token_to_ids = {}
-        for key, value in data.items():
+        for value, key in data.items():
+            # print(f"Processing token_id: {key}, token_text: {value}")
             token_id = int(key)
             token_text = value
             id_to_token[token_id] = token_text

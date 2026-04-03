@@ -1,8 +1,8 @@
-from src.llm_engine import LLMEngine
 from src.utils import get_valid_next_token
-from src.vocab import Vocabulary
+
+
 def get_function_names(functions):
-    return [function["name"] for function in functions]
+    return [function.name for function in functions]
 
 
 def select_best_valid_token(logits, valid_token_ids):
@@ -29,8 +29,9 @@ def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
     for _ in range(max_steps):
         full_ids = prompt_ids + generated_ids
         logits = engine.get_next_token_logits(full_ids)
-        valid_next_token_ids = get_valid_next_token(generated_text, function_names, vocabulary)
-    
+        valid_next_token_ids = get_valid_next_token(generated_text,
+                                                    function_names, vocabulary)
+
     if not valid_next_token_ids:
         raise ValueError("No valid tokens available.")
 
@@ -46,4 +47,3 @@ def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
     if generated_text in function_names:
         return generated_text
     raise ValueError("Could not decode a valid function name.")
-

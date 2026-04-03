@@ -47,13 +47,17 @@ def main():
     with open("data/input/function_calling_tests.json", "r") as f:
         prompt_items = json.load(f)    
     
-    vocab = Vocabulary()
-    generated_text = decode_function_name(
-        user_prompt=prompt_items[0]["prompt"],
-        functions=function_definitions,
-        engine=LLMEngine(),
-        vocabulary=Vocabulary(),
+    validate_function = validate_function_definitions(function_definitions)
+    validate_prompt = validate_prompt_items(prompt_items)
     
+    engine = LLMEngine()
+    vocab_path = engine.model.get_path_to_vocab_file()
+    vocabulary = Vocabulary.from_json_file(vocab_path)
+    generated_text = decode_function_name(
+        user_prompt=validate_prompt[0].prompt,
+        functions=validate_function,
+        engine=engine,
+        vocabulary=vocabulary
     )
     print(generated_text)
     

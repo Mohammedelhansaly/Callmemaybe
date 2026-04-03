@@ -9,7 +9,8 @@ class LLMEngine:
     def build_prompt(self, prompt, functions):
         lines = []
         for function in functions:
-            lines.append(f"{function['name']} : {function['description']}")
+            lines.append(f"- {function}")
+            # print(f"Added function to prompt: {function['name']} ")
         joined_functions = "\n".join(lines)
         return (
             "You are a function selection assistant.\n"
