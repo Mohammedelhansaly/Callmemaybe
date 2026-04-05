@@ -1,19 +1,19 @@
 from typing import List
 class Solution:
-    def strStr(self, haystack: str, needle: str) -> int:
-        if not needle:
-            return 0
-        for i in range(len(haystack)):
-            for j in range(len(needle)):
-                if (i + j >= len(haystack)) or haystack[i + j] != needle[j] :
-                    break
-                else:
-                    if j == len(needle) - 1:
-                        return i        
-        return -1
+    def searchInsert(self, nums: List[int], target: int) -> int:
+        left, right = 0, len(nums) - 1
+        while left <= right:
+            mid = left + (right - left) // 2
+            if nums[mid] == target:
+                return mid
+            elif nums[mid] < target:
+                return mid + 1
+            else:
+                return mid - 1
+        
 
 if __name__ == "__main__":
     solution = Solution()
-    nums = [1, 1, 2, 3,3]
-    print(solution.strStr("aaa","aaaa"))  # Output: 2
+    nums = [1, 3, 5, 6, 7]
+    print(solution.searchInsert(nums=nums, target=7))  # Output: 2
     # print(nums)  # Output: [1, 2, 2]

@@ -4,7 +4,7 @@ from src.utils import load_json_file, save_json_file
 from src.vocab import Vocabulary
 from src.utils import is_valid_prefix, get_valid_next_token, is_complete_match
 from src.llm_engine import LLMEngine
-from src.decoder import decode_function_name, get_function_names
+from src.decoder import decode_function_name, decode_string_value,get_function_names
 def main():
     # id_to_token={
     #     1: "fn_",
@@ -40,7 +40,7 @@ def main():
     # )
     # promtpt_ids = engine.encode_to_list(promt_text)
     # print(promtpt_ids)
-    try:
+    # try:
         with open("data/input/functions_definition.json", "r") as f:
             function_definitions = json.load(f)
 
@@ -50,19 +50,20 @@ def main():
         validate_function = validate_function_definitions(function_definitions)
         # print(validate_function[0].name)
         validate_prompt = validate_prompt_items(prompt_items)
-        
-        # engine = LLMEngine()
-        # vocab_path = engine.model.get_path_to_vocab_file()
-        # vocabulary = Vocabulary.from_json_file(vocab_path)
-        # generated_text = decode_function_name(
-        #     user_prompt=validate_prompt[0].prompt,
-        #     functions=validate_function,
-        #     engine=engine,
-        #     vocabulary=vocabulary
-        # )
-        # print(generated_text)
-    except Exception as e:
-        print(e)
+        # print(get_function_names(validate_function))
+        engine = LLMEngine()
+        vocab_path = engine.model.get_path_to_vocab_file()
+        vocabulary = Vocabulary.from_json_file(vocab_path)
+        generated_text = decode_string_value(
+            user_prompt=validate_prompt[4].prompt,
+            function_name="fn_reverse_string",
+            parameter="s",
+            engine=engine,
+            vocabulary=vocabulary
+        )
+        print(generated_text)
+    # except Exception as e:
+    #     print(e)
     
 
 

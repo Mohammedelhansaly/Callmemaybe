@@ -1,5 +1,6 @@
 from pathlib import Path
 from .vocab import Vocabulary
+
 import json
 
 
@@ -54,6 +55,24 @@ def get_valid_next_token(partial_text, allowed_strings,
         candidate_text = partial_text + token_text
 
         if is_valid_prefix(candidate_text, allowed_strings):
+            valid_token_ids.append(token)
+    return valid_token_ids
+
+
+def can_still_be_json_string(candidate_text: str) -> bool:
+    if not candidate_text:
+        return True
+    if candidate_text[0] != '"':
+        return False
+    return True
+
+
+def get_valid_string_token_ids(partial_text, vocabulary):
+    valid_token_ids = []
+    for token in vocabulary.all_tokens():
+        token_text = vocabulary.get_token_text(token)
+        candidate_text = partial_text + token_text
+        if can_still_be_json_string(candidate_text):
             valid_token_ids.append(token)
     return valid_token_ids
 
