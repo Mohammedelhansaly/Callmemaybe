@@ -40,26 +40,29 @@ def main():
     # )
     # promtpt_ids = engine.encode_to_list(promt_text)
     # print(promtpt_ids)
+    try:
+        with open("data/input/functions_definition.json", "r") as f:
+            function_definitions = json.load(f)
 
-    with open("data/input/functions_definition.json", "r") as f:
-        function_definitions = json.load(f)
-
-    with open("data/input/function_calling_tests.json", "r") as f:
-        prompt_items = json.load(f)    
-    
-    validate_function = validate_function_definitions(function_definitions)
-    validate_prompt = validate_prompt_items(prompt_items)
-    
-    engine = LLMEngine()
-    vocab_path = engine.model.get_path_to_vocab_file()
-    vocabulary = Vocabulary.from_json_file(vocab_path)
-    generated_text = decode_function_name(
-        user_prompt=validate_prompt[0].prompt,
-        functions=validate_function,
-        engine=engine,
-        vocabulary=vocabulary
-    )
-    print(generated_text)
+        with open("data/input/function_calling_tests.json", "r") as f:
+            prompt_items = json.load(f)    
+        
+        validate_function = validate_function_definitions(function_definitions)
+        # print(validate_function[0].name)
+        validate_prompt = validate_prompt_items(prompt_items)
+        
+        # engine = LLMEngine()
+        # vocab_path = engine.model.get_path_to_vocab_file()
+        # vocabulary = Vocabulary.from_json_file(vocab_path)
+        # generated_text = decode_function_name(
+        #     user_prompt=validate_prompt[0].prompt,
+        #     functions=validate_function,
+        #     engine=engine,
+        #     vocabulary=vocabulary
+        # )
+        # print(generated_text)
+    except Exception as e:
+        print(e)
     
 
 

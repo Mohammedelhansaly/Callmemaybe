@@ -24,3 +24,6 @@ class LLMEngine:
     def encode_to_list(self, text):
         tensor_ids = self.model.encode(text)
         return tensor_ids[0].tolist()
+
+    def get_next_token_logits(self, token_ids):
+        return self.model.get_logits_from_input_ids(token_ids)

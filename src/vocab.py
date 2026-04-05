@@ -8,7 +8,7 @@ class Vocabulary:
 
     @classmethod
     def from_json_file(cls, path):
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
         id_to_token = {}
         token_to_ids = {}

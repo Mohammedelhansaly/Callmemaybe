@@ -29,21 +29,26 @@ def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
     for _ in range(max_steps):
         full_ids = prompt_ids + generated_ids
         logits = engine.get_next_token_logits(full_ids)
-        valid_next_token_ids = get_valid_next_token(generated_text,
-                                                    function_names, vocabulary)
 
-    if not valid_next_token_ids:
-        raise ValueError("No valid tokens available.")
+        valid_next_token_ids = get_valid_next_token(
+            generated_text,
+            function_names,
+            vocabulary,
+        )
 
-    next_token_id = select_best_valid_token(
-        logits,
-        valid_next_token_ids,
-    )
+        if not valid_next_token_ids:
+            raise ValueError("No valid tokens available.")
 
-    token_text = vocabulary.get_token_text(next_token_id)
-    generated_ids.append(next_token_id)
-    generated_text += token_text
+        next_token_id = select_best_valid_token(
+            logits,
+            valid_next_token_ids,
+        )
 
-    if generated_text in function_names:
-        return generated_text
+        token_text = vocabulary.get_token_text(next_token_id)
+        generated_ids.append(next_token_id)
+        generated_text += token_text
+
+        if generated_text in function_names:
+            return generated_text
+
     raise ValueError("Could not decode a valid function name.")

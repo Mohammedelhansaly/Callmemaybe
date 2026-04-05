@@ -1,26 +1,19 @@
-
-from typing import Optional
-class ListNode:
-    def __init__(self, val=0, next=None):
-        self.val = val
-        self.next = next
+from typing import List
 class Solution:
-    def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:
-        dummy = ListNode()
-        tail = dummy
-
-        while list1 and list2:
-            if list1.val < list2.val:
-                tail.next = list1
-                list1 = list1.nex
-            else:
-                tail.next = list2
-                list2 = list2.next
-            tail = tail.next
-        tail.next = list1 if list1 else list2
-        return dummy.next
-
+    def strStr(self, haystack: str, needle: str) -> int:
+        if not needle:
+            return 0
+        for i in range(len(haystack)):
+            for j in range(len(needle)):
+                if (i + j >= len(haystack)) or haystack[i + j] != needle[j] :
+                    break
+                else:
+                    if j == len(needle) - 1:
+                        return i        
+        return -1
 
 if __name__ == "__main__":
-    s = Solution()
-    print(s.mergeTwoLists([1, 2, 4], [1, 3, 4]))
+    solution = Solution()
+    nums = [1, 1, 2, 3,3]
+    print(solution.strStr("aaa","aaaa"))  # Output: 2
+    # print(nums)  # Output: [1, 2, 2]
