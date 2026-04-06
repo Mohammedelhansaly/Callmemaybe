@@ -40,7 +40,7 @@ def main():
     # )
     # promtpt_ids = engine.encode_to_list(promt_text)
     # print(promtpt_ids)
-    # try:
+    try:
         with open("data/input/functions_definition.json", "r") as f:
             function_definitions = json.load(f)
 
@@ -62,8 +62,8 @@ def main():
             vocabulary=vocabulary
         )
         print(generated_text)
-    # except Exception as e:
-    #     print(e)
+    except Exception as e:
+        print(e)
     
 
 

@@ -23,12 +23,17 @@ class LLMEngine:
     def build_prompt_parameters(self, prompt, function_name,
                                 parameter_name, parameter_type):
         return (
-            "You are extracting one function parameter.\n\n"
+            "Extract exactly one parameter value from the user request.\n"
+            "Do not answer the request.\n"
+            "Do not execute the function.\n"
+            "Do not explain anything.\n"
+            "Do not return an object.\n"
+            "Return only one valid JSON value.\n\n"
             f"User request:\n{prompt}\n\n"
             f"Selected function:\n{function_name}\n\n"
             f"Parameter name:\n{parameter_name}\n\n"
             f"Parameter type:\n{parameter_type}\n\n"
-            "Return only a valid JSON value for this parameter.\n"
+            "For a string parameter, return the exact original string as a JSON string.\n"
         )
 
     def encode_to_list(self, text):
@@ -37,3 +42,6 @@ class LLMEngine:
 
     def get_next_token_logits(self, token_ids):
         return self.model.get_logits_from_input_ids(token_ids)
+
+    def decode_ids(self, token_ids):
+        return self.model.decode(token_ids)

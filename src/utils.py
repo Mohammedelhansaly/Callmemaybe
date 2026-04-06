@@ -62,9 +62,20 @@ def get_valid_next_token(partial_text, allowed_strings,
 def can_still_be_json_string(candidate_text: str) -> bool:
     if not candidate_text:
         return True
-    if candidate_text[0] != '"':
+
+    if not candidate_text.startswith('"'):
         return False
-    return True
+
+    try:
+        value = json.loads(candidate_text)
+        return isinstance(value, str)
+    except json.JSONDecodeError:
+        pass
+
+    if candidate_text.count('"') == 1:
+        return True
+
+    return False
 
 
 def get_valid_string_token_ids(partial_text, vocabulary):
@@ -72,8 +83,12 @@ def get_valid_string_token_ids(partial_text, vocabulary):
     for token in vocabulary.all_tokens():
         token_text = vocabulary.get_token_text(token)
         candidate_text = partial_text + token_text
-        if can_still_be_json_string(candidate_text):
-            valid_token_ids.append(token)
+        if partial_text == "":
+            if candidate_text.startswith('"'):
+                valid_token_ids.append(token)
+        else:
+            if can_still_be_json_string(candidate_text):
+                valid_token_ids.append(token)
     return valid_token_ids
 
 

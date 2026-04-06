@@ -1,6 +1,7 @@
 from src.utils import get_valid_next_token, get_valid_string_token_ids
 import json
 
+
 def get_function_names(functions):
     return [function.name for function in functions]
 
@@ -60,7 +61,6 @@ def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
     raise ValueError("Could not decode a valid function name.")
 
 
-
 def decode_string_value(user_prompt, function_name,
                         parameter, engine, vocabulary) -> str:
     prompt_text = engine.build_prompt_parameters(
@@ -94,7 +94,7 @@ def decode_string_value(user_prompt, function_name,
 
         token_text = vocabulary.get_token_text(next_token_id)
         generated_ids.append(next_token_id)
-        generated_text += token_text
+        generated_text = engine.decode_ids(generated_ids)
 
         # print("generated_text:", repr(generated_text))
         # print(
