@@ -117,6 +117,23 @@ def get_valid_number_token_ids(partial_text, vocabulary):
             valid_token_ids.append(token)
     return valid_token_ids
 
+def get_valid_boolean_token_ids(generated_ids, engine, vocabulary):
+    valid_token_ids = []
+
+    for token_id in vocabulary.all_tokens():
+        candidate_ids = generated_ids + [token_id]
+        candidate_text = engine.decode_ids(candidate_ids).strip()
+
+        if (
+            candidate_text == "true"
+            or candidate_text == "false"
+            or "true".startswith(candidate_text)
+            or "false".startswith(candidate_text)
+        ):
+            valid_token_ids.append(token_id)
+
+    return valid_token_ids
+
 
 
 def is_complete_match(text, allowed_strings):

@@ -1,4 +1,4 @@
-from src.utils import get_valid_next_token, get_valid_string_token_ids, get_valid_number_token_ids
+from src.utils import get_valid_next_token, get_valid_string_token_ids, get_valid_number_token_ids, get_valid_boolean_token_ids
 import json
 
 
@@ -148,4 +148,54 @@ def decode_number_value(user_prompt, function_name, parameter, engine, vocabular
             return value
         except ValueError:
             return False
+
+    raise ValueError("Could not decode a valid number value.")
+
+def decode_boolean_value(
+    user_prompt,
+    function_name,
+    parameter,
+    engine,
+    vocabulary,
+):
+    prompt_text = engine.build_boolean_prompt_parameters(
+        user_prompt,
+        function_name,
+        parameter,
+        "boolean",
+    )
+    prompt_ids = engine.encode_to_list(prompt_text)
+
+    max_steps = 20
+    generated_ids = []
+
+    for _ in range(max_steps):
+        generated_text = engine.decode_ids(generated_ids).strip()
+
+        full_ids = prompt_ids + generated_ids
+        logits = engine.get_next_token_logits(full_ids)
+
+        valid_next_token_ids = get_valid_boolean_token_ids(
+            generated_ids,
+            engine,
+            vocabulary,
+        )
+
+        if not valid_next_token_ids:
+            raise ValueError("No valid tokens available.")
+
+        next_token_id = select_best_valid_token(
+            logits,
+            valid_next_token_ids,
+        )
+
+        generated_ids.append(next_token_id)
+        generated_text = engine.decode_ids(generated_ids).strip()
+
+        if generated_text == "true":
+            return True
+        if generated_text == "false":
+            return False
+
+    raise ValueError("Could not decode a valid boolean value.")
 
