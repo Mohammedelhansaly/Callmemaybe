@@ -1,4 +1,4 @@
-from src.utils import get_valid_next_token, get_valid_string_token_ids
+from src.utils import get_valid_next_token, get_valid_string_token_ids, get_valid_number_token_ids
 import json
 
 
@@ -92,7 +92,7 @@ def decode_string_value(user_prompt, function_name,
             valid_next_token_ids,
         )
 
-        token_text = vocabulary.get_token_text(next_token_id)
+        # token_text = vocabulary.get_token_text(next_token_id)
         generated_ids.append(next_token_id)
         generated_text = engine.decode_ids(generated_ids)
 
@@ -111,3 +111,41 @@ def decode_string_value(user_prompt, function_name,
             pass
 
     raise ValueError("Could not decode a valid string value.")
+
+
+def decode_number_value(user_prompt, function_name, parameter, engine, vocabulary):
+    
+    promtpt_text = engine.build_number_prompt_parameters(
+        user_prompt,
+        function_name,
+        parameter,
+        "number"
+    )
+    prompt_ids = engine.encode_to_list(promtpt_text)
+    generated_ids = []
+    max_steps = 100
+    generated_text = ""
+    for _ in range(max_steps):
+        full_ids = prompt_ids + generated_ids
+        logits = engine.get_next_token_logits(full_ids)
+
+        valid_next_token_ids = get_valid_number_token_ids(
+            generated_text,
+            vocabulary
+        )
+        if not valid_next_token_ids:
+            raise ValueError("No valid tokens available.")
+        
+        next_token_id = select_best_valid_token(
+            logits,
+            valid_next_token_ids
+        )
+        generated_ids.append(next_token_id)
+        generated_text = engine.decode_ids(generated_ids)
+
+        try:
+            value = float(generated_text)
+            return value
+        except ValueError:
+            return False
+

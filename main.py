@@ -55,9 +55,9 @@ def main():
         vocab_path = engine.model.get_path_to_vocab_file()
         vocabulary = Vocabulary.from_json_file(vocab_path)
         generated_text = decode_string_value(
-            user_prompt=validate_prompt[4].prompt,
-            function_name="fn_reverse_string",
-            parameter="s",
+            user_prompt=validate_prompt[0].prompt,
+            function_name="fn_add_numbers",
+            parameter="a",
             engine=engine,
             vocabulary=vocabulary
         )
