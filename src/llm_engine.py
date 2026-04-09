@@ -53,7 +53,7 @@ class LLMEngine:
 
     def build_boolean_prompt_parameters(self, prompt, function_name, parameter_name, parameter_type):
         return (
-            "Extract exactly all parameter value from the user request.\n"
+            "Extract the value of the given parameter from the user request.\n"
             "Do not answer the request.\n"
             "Do not execute the function.\n"
             "Do not explain anything.\n"
@@ -63,8 +63,28 @@ class LLMEngine:
             f"Selected function:\n{function_name}\n\n"
             f"Parameter name:\n{parameter_name}\n\n"
             f"Parameter type:\n{parameter_type}\n\n"
-            "For a boolean parameter, return the boolean as a JSON boolean. Do not return it as a string.\n"
+            "For a boolean parameter, return only true or false as a JSON boolean.\n"
         )
+    
+    def build_parameters_object_prompt(self, prompt, function_def):
+        lines = []
+        for param_name, param_def in function_def.parameters.items():
+            lines.append(f" - {param_name} : {param_def.type}")
+        joined_parameters = "\n".join(lines)
+        return (
+            "Extract the parameter values for the selected function.\n"
+            "Do not answer the request.\n"
+            "Do not execute the function.\n"
+            "Do not explain anything.\n"
+            "Return only one valid JSON object.\n"
+            "Use the exact parameter names from the schema.\n\n"
+            f"User request:\n{prompt}\n\n"
+            f'Selected function:\n{function_def.name}\n\n'
+            f"Parameters:\n{joined_parameters}\n\n"
+            "Return only the JSON object.\n"
+        )
+
+
     def encode_to_list(self, text):
         tensor_ids = self.model.encode(text)
         return tensor_ids[0].tolist()

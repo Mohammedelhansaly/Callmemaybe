@@ -1,5 +1,6 @@
-from src.utils import get_valid_next_token, get_valid_string_token_ids, get_valid_number_token_ids, get_valid_boolean_token_ids
+from src.utils import get_valid_next_token, get_valid_string_token_ids, get_valid_number_token_ids, get_valid_boolean_token_ids, get_valid_object_token_ids
 import json
+from src.models import FunctionCallResult
 
 
 def get_function_names(functions):
@@ -170,8 +171,6 @@ def decode_boolean_value(
     generated_ids = []
 
     for _ in range(max_steps):
-        generated_text = engine.decode_ids(generated_ids).strip()
-
         full_ids = prompt_ids + generated_ids
         logits = engine.get_next_token_logits(full_ids)
 
@@ -188,8 +187,8 @@ def decode_boolean_value(
             logits,
             valid_next_token_ids,
         )
-
         generated_ids.append(next_token_id)
+
         generated_text = engine.decode_ids(generated_ids).strip()
 
         if generated_text == "true":
@@ -198,4 +197,43 @@ def decode_boolean_value(
             return False
 
     raise ValueError("Could not decode a valid boolean value.")
+
+def decode_parameters_object(user_prompt, function_def, engine, vocabulary):
+    prompt_text = engine.build_parameters_object_prompt(
+        user_prompt,
+        function_def,
+    )
+    prompt_ids = engine.encode_to_list(prompt_text)
+    max_steps = 200
+    generated_ids = []
+
+    for _ in range(max_steps):
+        full_ids = prompt_ids + generated_ids
+        logits = engine.get_next_token_logits(full_ids)
+
+        valid_next_token_ids = get_valid_object_token_ids(
+            generated_ids,
+            engine,
+            vocabulary
+        )
+
+        if not valid_next_token_ids:
+            raise ValueError("No valid tokens available.")
+        next_token_id = select_best_valid_token(
+            logits,
+            valid_next_token_ids
+        )
+
+        generated_ids.append(next_token_id)
+        generated_text = engine.decode_ids(generated_ids)
+        try:
+            value = json.loads(generated_text)
+            if isinstance(value, dict):
+                FunctionCallResult.validate_parameters_against_definition(function_def, value)
+                return value
+        except json.JSONDecodeError:
+            pass
+    
+    raise ValueError("Could not decode a valid parameters object.")
+
 

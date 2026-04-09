@@ -4,7 +4,7 @@ from src.utils import load_json_file, save_json_file
 from src.vocab import Vocabulary
 from src.utils import is_valid_prefix, get_valid_next_token, is_complete_match
 from src.llm_engine import LLMEngine
-from src.decoder import decode_function_name, decode_string_value,get_function_names, decode_boolean_value
+from src.decoder import decode_function_name, decode_string_value,get_function_names, decode_boolean_value, decode_parameters_object
 def main():
     # id_to_token={
     #     1: "fn_",
@@ -40,7 +40,7 @@ def main():
     # )
     # promtpt_ids = engine.encode_to_list(promt_text)
     # print(promtpt_ids)
-    try:
+    # try:
         with open("data/input/functions_definition.json", "r") as f:
             function_definitions = json.load(f)
 
@@ -54,16 +54,15 @@ def main():
         engine = LLMEngine()
         vocab_path = engine.model.get_path_to_vocab_file()
         vocabulary = Vocabulary.from_json_file(vocab_path)
-        generated_text = decode_boolean_value(
+        generated_text = decode_parameters_object(
             user_prompt=validate_prompt[11].prompt,
-            function_name="fn_set_dark_mode",
-            parameter="enabled",
+            function_def=validate_function[5],
             engine=engine,
             vocabulary=vocabulary
         )
         print(generated_text)
-    except Exception as e:
-        print(e)
+    # except Exception as e:
+    #     print(e)
     
 
 
