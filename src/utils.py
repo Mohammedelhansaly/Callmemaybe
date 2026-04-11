@@ -93,10 +93,11 @@ def can_still_be_json_number(candidate_text):
     if "-" in candidate_text and not candidate_text.startswith("-"):
         return False
 
+
 def can_still_be_json_object(candidate_text):
     if not candidate_text:
         return True
-    
+
     stripped = candidate_text.strip()
     if not stripped:
         return True
