@@ -59,41 +59,6 @@ def get_valid_next_token(partial_text, allowed_strings,
     return valid_token_ids
 
 
-def can_still_be_json_string(candidate_text: str) -> bool:
-    if not candidate_text:
-        return True
-
-    if not candidate_text.startswith('"'):
-        return False
-
-    try:
-        value = json.loads(candidate_text)
-        return isinstance(value, str)
-    except json.JSONDecodeError:
-        pass
-
-    if candidate_text.count('"') == 1:
-        return True
-
-    return False
-
-
-def can_still_be_json_number(candidate_text):
-    if not candidate_text:
-        return True
-
-    allowed_chars = set("0123456789.-")
-    for char in candidate_text:
-        if char not in allowed_chars:
-            return False
-
-    if candidate_text.count("-") > 1 or candidate_text.count(".") > 1:
-        return False
-
-    if "-" in candidate_text and not candidate_text.startswith("-"):
-        return False
-
-
 def can_still_be_json_object(candidate_text):
     if not candidate_text:
         return True
@@ -105,49 +70,8 @@ def can_still_be_json_object(candidate_text):
         return False
     return True
 
-def get_valid_string_token_ids(partial_text, vocabulary):
-    valid_token_ids = []
-    for token in vocabulary.all_tokens():
-        token_text = vocabulary.get_token_text(token)
-        candidate_text = partial_text + token_text
-        if partial_text == "":
-            if candidate_text.startswith('"'):
-                valid_token_ids.append(token)
-        else:
-            if can_still_be_json_string(candidate_text):
-                valid_token_ids.append(token)
-    return valid_token_ids
 
-
-def get_valid_number_token_ids(partial_text, vocabulary):
-    valid_token_ids = []
-    for token in vocabulary.all_tokens():
-        token_text = vocabulary.get_token_text(token)
-        candidate_text = partial_text + token_text
-        if can_still_be_json_number(candidate_text):
-            valid_token_ids.append(token)
-    return valid_token_ids
-
-def get_valid_boolean_token_ids(generated_ids, engine, vocabulary):
-    valid_token_ids = []
-
-    for token_id in vocabulary.all_tokens():
-        candidate_ids = generated_ids + [token_id]
-        raw_text = engine.decode_ids(candidate_ids)
-        candidate_text = raw_text.strip()
-
-        if not candidate_text:
-            continue
-
-        if candidate_text in ("true", "false"):
-            valid_token_ids.append(token_id)
-            continue
-
-        if "true".startswith(candidate_text) or "false".startswith(candidate_text):
-            valid_token_ids.append(token_id)
-
-    return valid_token_ids
-
+######
 def get_valid_object_token_ids(generated_ids, engine, vocabulary):
     valid_token_ids = []
     for token in vocabulary.all_tokens():
@@ -156,6 +80,7 @@ def get_valid_object_token_ids(generated_ids, engine, vocabulary):
         if can_still_be_json_object(candidate_text):
             valid_token_ids.append(token)
     return valid_token_ids
+####
 
 
 def is_complete_match(text, allowed_strings):
