@@ -11,6 +11,6 @@ debug: install
 	uv run -m pdb src/__main__.py
 lint: 
 	uv run flake8 src
-	uv run mypy src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	uv run mypy -m src --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 clean:
 	rm -rf */__pycache__ .mypy_cache
