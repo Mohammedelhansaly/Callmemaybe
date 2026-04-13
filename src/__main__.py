@@ -12,7 +12,7 @@ DEFAULT_INPUT_PATH = "data/input/function_calling_tests.json"
 DEFAULT_OUTPUT_PATH = "data/output/function_calling_results.json"
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Process function "
                                      "definitions and prompt items.")
     parser.add_argument("--functions_definition",
@@ -24,7 +24,7 @@ def parse_arguments():
     return parser
 
 
-def main():
+def main() -> None:
     parser = parse_arguments()
     args = parser.parse_args()
 
@@ -52,4 +52,4 @@ def main():
 
 
 if __name__ == "__main__":
-    SystemExit(main())
+    main()

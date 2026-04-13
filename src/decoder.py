@@ -1,18 +1,21 @@
 from src.utils import get_valid_next_token, get_valid_object_token_ids
 import json
 from src.models import FunctionCallResult
+from .llm_engine import LLMEngine
+from .vocab import Vocabulary
 
 
-def get_function_names(functions):
+def get_function_names(functions: list) -> list[str]:
     return [function.name for function in functions]
 
 
-def get_function_desc(functions):
+def get_function_desc(functions: list) -> list[str]:
     return [function.description for function in functions]
 
 
 # #####
-def select_best_valid_token(logits, valid_token_ids):
+def select_best_valid_token(logits: list[float],
+                            valid_token_ids: list[int]) -> int:
     best_token_id = valid_token_ids[0]
     best_score = logits[best_token_id]
 
@@ -26,14 +29,15 @@ def select_best_valid_token(logits, valid_token_ids):
 # #####
 
 
-def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
+def decode_function_name(user_prompt: str, functions: list, engine: LLMEngine,
+                         vocabulary: Vocabulary) -> str:
     function_names = get_function_names(functions)
     function_desc = get_function_desc(functions)
     prompt_text = engine.build_prompt(user_prompt, function_names,
                                       function_desc)
     prompt_ids = engine.encode_to_list(prompt_text)
 
-    generated_ids = []
+    generated_ids: list[int] = []
     generated_text = ""
     max_steps = 100
 
@@ -65,14 +69,16 @@ def decode_function_name(user_prompt, functions, engine, vocabulary) -> str:
     raise ValueError("Could not decode a valid function name.")
 
 
-def decode_parameters_object(user_prompt, function_def, engine, vocabulary):
+def decode_parameters_object(user_prompt: str,
+                             function_def: dict, engine: LLMEngine,
+                             vocabulary: Vocabulary) -> dict:
     prompt_text = engine.build_parameters_object_prompt(
         user_prompt,
         function_def,
     )
     prompt_ids = engine.encode_to_list(prompt_text)
     max_steps = 200
-    generated_ids = []
+    generated_ids: list[int] = []
 
     for _ in range(max_steps):
         full_ids = prompt_ids + generated_ids

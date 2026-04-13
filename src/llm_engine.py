@@ -3,10 +3,11 @@ from llm_sdk import Small_LLM_Model
 
 
 class LLMEngine:
-    def __init__(self):
+    def __init__(self) -> None:
         self.model = Small_LLM_Model()
 
-    def build_prompt(self, prompt, functions_names, functions_desc):
+    def build_prompt(self, prompt: str, functions_names: list,
+                     functions_desc: list) -> str:
         lines = []
         for name, desc in zip(functions_names, functions_desc):
             lines.append(f"- {name} : {desc}")
@@ -20,7 +21,8 @@ class LLMEngine:
             "return only the name of the function you choose\n"
         )
 
-    def build_parameters_object_prompt(self, prompt, function_def):
+    def build_parameters_object_prompt(self, prompt: str,
+                                       function_def: dict) -> str:
         lines = []
         for param_name, param_def in function_def.parameters.items():
             lines.append(f" - {param_name} : {param_def.type}")
@@ -38,12 +40,12 @@ class LLMEngine:
             "Return only the JSON object.\n"
         )
 
-    def encode_to_list(self, text):
+    def encode_to_list(self, text: str) -> list[str]:
         tensor_ids = self.model.encode(text)
         return tensor_ids[0].tolist()
 
-    def get_next_token_logits(self, token_ids):
+    def get_next_token_logits(self, token_ids: list[int]) -> list[float]:
         return self.model.get_logits_from_input_ids(token_ids)
 
-    def decode_ids(self, token_ids):
+    def decode_ids(self, token_ids: list[int]) -> str:
         return self.model.decode(token_ids)
