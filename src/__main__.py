@@ -6,6 +6,7 @@ from src.llm_engine import LLMEngine
 from src.pipeline import pipeline
 import argparse
 import sys
+import time
 
 DEFAULT_FUNCTION_DEFINITIONS_PATH = "data/input/functions_definition.json"
 DEFAULT_INPUT_PATH = "data/input/function_calling_tests.json"
@@ -29,6 +30,7 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
+        start = time.time()
         function_definitions = load_json_file(args.functions_definition)
         prompt_items = load_json_file(args.input)
         validate_function = validate_function_definitions(function_definitions)
@@ -43,6 +45,8 @@ def main() -> None:
                            vocabulary)
         output_data = [result.model_dump() for result in results]
         save_json_file(output_data, args.output)
+        end = time.time()
+        print(end - start)
     except ReadFileError as e:
         print(f"File error {e} ", file=sys.stderr)
     except ValueError as e:

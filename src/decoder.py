@@ -69,6 +69,16 @@ def decode_function_name(user_prompt: str, functions: list, engine: LLMEngine,
     raise ValueError("Could not decode a valid function name.")
 
 
+def normalize_numbers_to_float(data):
+    if isinstance(data, dict):
+        return {k: normalize_numbers_to_float(v) for k, v in data.items()}
+    if isinstance(data, list):
+        return [normalize_numbers_to_float(v) for v in data]
+    if isinstance(data, int) and not isinstance(data, bool):
+        return float(data)
+    return data
+
+
 def decode_parameters_object(user_prompt: str,
                              function_def: dict, engine: LLMEngine,
                              vocabulary: Vocabulary) -> dict:
@@ -101,6 +111,7 @@ def decode_parameters_object(user_prompt: str,
         generated_text = engine.decode_ids(generated_ids)
         try:
             value = json.loads(generated_text)
+            value = normalize_numbers_to_float(value)
             if isinstance(value, dict):
                 FunctionCallResult.validate_parameters_against_definition(
                     function_def, value)

@@ -67,18 +67,5 @@
     "returns": {
       "type": "string"
     }
-  },
-  {
-  "name": "fn_set_dark_mode",
-  "description": "Enable or disable dark mode based on the provided boolean value.",
-  "parameters": {
-    "enabled": {
-      "type": "boolean"
-    }
-  },
-  "returns": {
-      "type": "boolean"
-    }
   }
-
 ]
