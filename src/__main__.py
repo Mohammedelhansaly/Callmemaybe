@@ -17,8 +17,10 @@ def parse_arguments() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Process function "
                                      "definitions and prompt items.")
     parser.add_argument("--functions_definition",
+                        default=DEFAULT_FUNCTION_DEFINITIONS_PATH,
                         help="Path to the function definitions JSON file.")
     parser.add_argument("--input",
+                        default=DEFAULT_INPUT_PATH,
                         help="path to the input prompts JSON file.")
     parser.add_argument("--output",
                         help="path to the output JSON file.")
@@ -50,7 +52,7 @@ def main() -> None:
     except ReadFileError as e:
         print(f"File error {e} ", file=sys.stderr)
     except ValueError as e:
-        print(f"validation error {e} ", file=sys.stderr)
+        print(f"validation error {e.errors()[0]['msg']}", file=sys.stderr)
     except Exception as e:
         print(f"Unexpected error: {e}", file=sys.stderr)
 
