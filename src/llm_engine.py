@@ -40,7 +40,7 @@ class LLMEngine:
             "Return only the JSON object.\n"
         )
 
-    def encode_to_list(self, text: str) -> list[str]:
+    def encode_to_list(self, text: str) -> list[int]:
         tensor_ids = self.model.encode(text)
         return tensor_ids[0].tolist()
 

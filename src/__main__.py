@@ -23,6 +23,7 @@ def parse_arguments() -> argparse.ArgumentParser:
                         default=DEFAULT_INPUT_PATH,
                         help="path to the input prompts JSON file.")
     parser.add_argument("--output",
+                        default=DEFAULT_OUTPUT_PATH,
                         help="path to the output JSON file.")
     return parser
 
